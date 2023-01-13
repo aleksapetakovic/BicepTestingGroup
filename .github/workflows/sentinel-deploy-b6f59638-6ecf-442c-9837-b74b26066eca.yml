@@ -18,9 +18,7 @@ on:
     - '.github/workflows/sentinel-deploy-b6f59638-6ecf-442c-9837-b74b26066eca.yml'
 
 jobs:
-  deploy-content:
-    needs: bVSOC-build-bicep  
-    bVSOC-build-bicep:
+  bVSOC-build-bicep:
     runs-on: ubuntu-latest
     env:
       githubAuthToken: ${{ secrets.GITHUB_TOKEN }}
@@ -49,6 +47,8 @@ jobs:
           git push
     - name: sleep 5s
       run: sleep 5s
+  deploy-content:
+    needs: bVSOC-build-bicep
     runs-on: windows-latest
     env:
       resourceGroupName: 'rg-sentinel-playground-01'
