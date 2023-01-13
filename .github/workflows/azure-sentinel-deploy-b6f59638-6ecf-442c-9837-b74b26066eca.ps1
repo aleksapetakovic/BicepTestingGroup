@@ -7,12 +7,14 @@ $Directory = $Env:directory
 $Creds = $Env:creds
 $contentTypes = $Env:contentTypes
 $contentTypeMapping = @{
-    "AnalyticsRule"=@("Microsoft.OperationalInsights/workspaces/providers/alertRules", "Microsoft.OperationalInsights/workspaces/providers/alertRules/actions");
-    "AutomationRule"=@("Microsoft.OperationalInsights/workspaces/providers/automationRules");
+    "AnalyticsRule"=@("Microsoft.OperationalInsights/workspaces/providers/alertRules", "Microsoft.OperationalInsights/workspaces/providers/alertRules/actions", "Microsoft.SecurityInsights/alertRules");
+    "AutomationRule"=@("Microsoft.OperationalInsights/workspaces/providers/automationRules", "Microsoft.SecurityInsights/automationRules");
     "HuntingQuery"=@("Microsoft.OperationalInsights/workspaces/savedSearches");
     "Parser"=@("Microsoft.OperationalInsights/workspaces/savedSearches");
     "Playbook"=@("Microsoft.Web/connections", "Microsoft.Logic/workflows", "Microsoft.Web/customApis");
     "Workbook"=@("Microsoft.Insights/workbooks");
+    "Watchlist"=@("Microsoft.OperationalInsights/workspaces/providers/Watchlists");
+    "Queries" = @("Microsoft.OperationalInsights/queryPacks/queries","Microsoft.OperationalInsights/queryPacks")
 }
 $sourceControlId = $Env:sourceControlId 
 $rootDirectory = $Env:rootDirectory

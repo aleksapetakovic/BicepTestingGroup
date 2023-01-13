@@ -19,6 +19,36 @@ on:
 
 jobs:
   deploy-content:
+    needs: bVSOC-build-bicep  
+    bVSOC-build-bicep:
+    runs-on: ubuntu-latest
+    env:
+      githubAuthToken: ${{ secrets.GITHUB_TOKEN }}
+      rootDirectory: '${{ github.workspace }}'
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+    
+    - name: build bicep files using powershell 
+      uses: azure/powershell@v1
+      with:
+        azPSVersion: 'latest'
+        inlineScript: |
+          ${{ github.workspace }}//.github/workflows/bVSOC-build-bicep.ps1
+    - name: check if there are any changes
+      id: verify_diff
+      run: |
+        git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
+    - name: commit
+      if: steps.verify_diff.outputs.changed == 'true'
+      run: |
+          git config user.name bicep-builder
+          git config user.email bicep@builder.com
+          git add -A
+          git commit -m "arm files built from bicep"
+          git push
+    - name: sleep 5s
+      run: sleep 5s
     runs-on: windows-latest
     env:
       resourceGroupName: 'rg-sentinel-playground-01'
@@ -27,7 +57,7 @@ jobs:
       directory: '${{ github.workspace }}'
       cloudEnv: 'AzureCloud'
       creds: ${{ secrets.AZURE_SENTINEL_CREDENTIALS_b6f596386ecf442c9837b74b26066eca }}
-      contentTypes: 'Workbook,Playbook,Parser,HuntingQuery,AutomationRule,AnalyticsRule'
+      contentTypes: 'AnalyticsRule,AutomationRule,HuntingQuery,Parser,Playbook,Workbook,Watchlist,Queries'
       branch: 'main'
       sourceControlId: 'b6f59638-6ecf-442c-9837-b74b26066eca'
       rootDirectory: '${{ github.workspace }}'
@@ -71,7 +101,10 @@ jobs:
         enable-AzPSSession: true
 
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        ref: main
     
     - name: Deploy Content to Azure Sentinel
       uses: azure/powershell@v1
